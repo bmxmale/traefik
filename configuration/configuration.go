@@ -457,20 +457,15 @@ func (certs *Certificates) CreateTLSConfig() (*tls.Config, error) {
 	for _, v := range certsSlice {
 		var err error
 
-		certContent, err := v.CertFile.Read()
-		if err != nil {
-			return nil, err
-		}
+        pemContent, err := v.PemFile.Read()
+        if err != nil {
+            return nil, err
+        }
 
-		keyContent, err := v.KeyFile.Read()
-		if err != nil {
-			return nil, err
-		}
-
-		cert, err := tls.X509KeyPair(certContent, keyContent)
-		if err != nil {
-			return nil, err
-		}
+        cert, err := tls.X509KeyPair(pemContent, pemContent)
+        if err != nil {
+            return nil, err
+        }
 
 		config.Certificates = append(config.Certificates, cert)
 	}
@@ -518,6 +513,7 @@ func (certs *Certificates) Type() string {
 type Certificate struct {
 	CertFile FileOrContent
 	KeyFile  FileOrContent
+	PemFile  FileOrContent
 }
 
 // Retry contains request retry config
